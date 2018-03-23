@@ -11,21 +11,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ExecutorsTest {
   private static final int MAX_THREADS = 5;
 
-  private static ExecutorService POOL;
+  private static final ExecutorService POOL = Executors.newFixedThreadPool(MAX_THREADS);
 
   private static AtomicInteger counter = new AtomicInteger();
 
   public static void main(String[] args) throws Exception {
-    POOL = Executors.newFixedThreadPool(MAX_THREADS);
     try {
       List<Future<String>> futures = new ArrayList<>();
       for (int i = 0; i < 100; i++) {
-        futures.add(POOL.submit(() -> doSomething()));
+        futures.add(POOL.submit(ExecutorsTest::doSomething));
       }
-      HashMap<String, AtomicInteger> histo = futures.stream().map(fu -> {
-        return safeFutureGet(fu);
-      }).collect(() -> new HashMap<>(), (map, key) -> histoAdd(map, key, 1),
-          (map1, map2) -> map2.entrySet().forEach(entry -> histoAdd(map1, entry.getKey(), entry.getValue().get())));
+      HashMap<String, AtomicInteger> histo = futures.stream()
+          .map(ExecutorsTest::safeFutureGet)
+          .collect(HashMap::new, (map, key) -> histoAdd(map, key, 1), (map1, map2) -> map2.forEach((key, value) -> histoAdd(map1, key, value.get())));
       System.out.println(histo);
     } finally {
       POOL.shutdown();
@@ -37,7 +35,8 @@ public class ExecutorsTest {
       return fu.get();
     } catch (InterruptedException | ExecutionException ex) {
       ex.printStackTrace();
-      return "failed:" + ex.getClass().getCanonicalName();
+      return "failed:" + ex.getClass()
+          .getCanonicalName();
     }
   }
 
@@ -60,7 +59,8 @@ public class ExecutorsTest {
       return "done";
     } catch (InterruptedException ex) {
       ex.printStackTrace();
-      return "failed:" + ex.getClass().getCanonicalName();
+      return "failed:" + ex.getClass()
+          .getCanonicalName();
     } finally {
       counter.decrementAndGet();
     }

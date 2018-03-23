@@ -18,19 +18,21 @@ public class ThreadsInspection {
     URL threadsUrl = Objects.requireNonNull(ThreadsInspection.class.getResource("/threads.txt"), "no threads");
     String threadsStr = new String(Files.readAllBytes(Paths.get(threadsUrl.toURI())), Charset.forName("UTF-8"));
 
-    List<String> blocks = Pattern.compile("\r?\n\r?\n").splitAsStream(threadsStr) //
-        .map(str -> str.trim()) //
-        .filter(str -> isThread(str)) //
+    List<String> blocks = Pattern.compile("\r?\n\r?\n")
+        .splitAsStream(threadsStr)
+        .map(String::trim)
+        .filter(ThreadsInspection::isThread)
         .collect(Collectors.toList());
-    Predicate<String> unknownBlocked = str -> isBlocked(str) && !isNanoCache301(str) && !isNemoDataComponent(str) && !isInInterior(str) && !isTaskQueue(str)
-        && !isSingularity(str) && !isThreadPool(str) && !isTimeoutServiceEngine(str) && !isMQ(str);
+    Predicate<String> unknownBlocked =
+        str -> isBlocked(str) && !isNanoCache301(str) && !isNemoDataComponent(str) && !isInInterior(str) && !isTaskQueue(str) && !isSingularity(str) && !isThreadPool(str) && !isTimeoutServiceEngine(
+            str) && !isMQ(str);
 
     //blocks.stream().filter(unknownBlocked).forEach(str -> System.out.println("####\n" + str));
 
     System.out.println("####\n|| Name || Count || Examples ||");
     printTableRow(blocks, "threads total", str -> true);
-    printTableRow(blocks, "threads blocked", str -> isBlocked(str));
-    printTableRow(blocks, "threads in interior", str -> isInInterior(str));
+    printTableRow(blocks, "threads blocked", ThreadsInspection::isBlocked);
+    printTableRow(blocks, "threads in interior", ThreadsInspection::isInInterior);
     printTableRow(blocks, "threads in interior (not blocked)", str -> isInInterior(str) && !isBlocked(str));
     printTableRow(blocks, "threads blocked in InteriorDataMatrix", str -> isBlocked(str) && isInInterior(str));
     printTableRow(blocks, "threads blocked in InteriorDataMatrix in NemoJSONRequestHandler", str -> isBlocked(str) && isInInterior(str) && isInNemoJSONRequest(str));
@@ -47,7 +49,7 @@ public class ThreadsInspection {
     printTableRow(blocks, "threads blocked in TimeoutServiceEngine", str -> isBlocked(str) && isTimeoutServiceEngine(str));
     printTableRow(blocks, "threads blocked in mq", str -> isBlocked(str) && isMQ(str));
     printTableRow(blocks, "threads blocked in other", unknownBlocked);
-    printTableRow(blocks, "threads handling requests", str -> isRequest(str));
+    printTableRow(blocks, "threads handling requests", ThreadsInspection::isRequest);
     printTableRow(blocks, "requests blocked", str -> isRequest(str) && isBlocked(str));
     printTableRow(blocks, "requests not blocked", str -> isRequest(str) && !isBlocked(str));
     printTableRow(blocks, "requests blocked not in getInteriorTiles", str -> isRequest(str) && isBlocked(str) && !isNemoDataComponent(str) && !isInInteriorTiles(str));
@@ -71,17 +73,23 @@ public class ThreadsInspection {
   }
 
   private static void printTableRow(List<String> blocks, String name, Predicate<String> matcher) {
-    List<String> list = blocks.stream().filter(matcher).collect(Collectors.toList());
+    List<String> list = blocks.stream()
+        .filter(matcher)
+        .collect(Collectors.toList());
     Collections.shuffle(list);
     StringJoiner sj = new StringJoiner(" | ", "| ", " |");
     sj.add(name);
     sj.add(String.valueOf(list.size()));
-    sj.add(list.stream().limit(5).map(str -> threadId(str)).collect(Collectors.joining(", ")));
+    sj.add(list.stream()
+        .limit(5)
+        .map(ThreadsInspection::threadId)
+        .collect(Collectors.joining(", ")));
     System.out.println(sj.toString());
   }
 
   private static String threadId(String str) {
-    Matcher matcher = Pattern.compile("Thread (\\d+):").matcher(str);
+    Matcher matcher = Pattern.compile("Thread (\\d+):")
+        .matcher(str);
     if (matcher.find()) {
       return matcher.group(1);
     }
@@ -124,6 +132,7 @@ public class ThreadsInspection {
   private static boolean isMQ(String str) {
     return str.contains("com.ibm.mq");
   }
+
   private static boolean isInInteriorTiles(String str) {
     return str.contains("SyntheticContentFacadeComponent.getInteriorTiles");
   }

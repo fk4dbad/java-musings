@@ -13,11 +13,6 @@ import com.google.common.io.Resources;
 
 public class ThreadsInspection2 {
 
-  static class WeightedOwnage {
-    String ownedBy;
-    
-  }
-  
   public static void main(String[] args) throws Exception {
 
     URL threadsUrl = Objects.requireNonNull(ThreadsInspection2.class.getResource("threads2.txt"), "no threads");
@@ -25,14 +20,14 @@ public class ThreadsInspection2 {
     List<String> blocks = Pattern.compile("\r?\n\r?\n\"")
         .splitAsStream(Resources.toString(threadsUrl, Charsets.UTF_8))
         .map(str -> "\"" + str)
-        .map(str -> str.trim())
-        .filter(str -> isThread(str))
+        .map(String::trim)
+        .filter(ThreadsInspection2::isThread)
         .collect(Collectors.toList());
 
     System.out.println("####\n|| Name || Count || Example Thread IDs ||");
     printTableRow(blocks, "threads total", str -> true);
-    printTableRow(blocks, "threads blocked", str -> isBlocked(str));
-    printTableRow(blocks, "threads handling requests", str -> isRequest(str));
+    printTableRow(blocks, "threads blocked", ThreadsInspection2::isBlocked);
+    printTableRow(blocks, "threads handling requests", ThreadsInspection2::isRequest);
     printTableRow(blocks, "requests blocked", str -> isRequest(str) && isBlocked(str));
     printTableRow(blocks, "requests not blocked", str -> isRequest(str) && !isBlocked(str));
 
@@ -43,12 +38,14 @@ public class ThreadsInspection2 {
     printTableRow(blocks, "threads running in getSetupDocument", str -> !isBlocked(str) && isInGetSetupDocument(str));
     printTableRow(blocks, "threads blocked in getSetupDocument not requests", str -> isBlocked(str) && !isRequest(str) && isInGetSetupDocument(str));
 
-    printTableRow(blocks, "threads blocked by thread Id=34330", str -> isBlocked(str) && ownedBy(str, 34330));
-    printTableRow(blocks, "threads blocked by thread Id=34330", str -> isBlocked(str) && ownedBy(str, 34330) && !isRequest(str));
+    printTableRow(blocks, "threads blocked by thread Id=34330", str -> isBlocked(str) && ownedBy34430(str));
+    printTableRow(blocks, "threads blocked by thread Id=34330", str -> isBlocked(str) && ownedBy34430(str) && !isRequest(str));
   }
 
-  private static boolean ownedBy(String str, int i) {
-    return Pattern.compile("owned by .+ Id=" + i).matcher(str).find();
+  private static boolean ownedBy34430(String str) {
+    return Pattern.compile("owned by .+ Id=" + 34330)
+        .matcher(str)
+        .find();
   }
 
   private static boolean isInGetSetupDocument(String str) {
@@ -65,7 +62,7 @@ public class ThreadsInspection2 {
     sj.add(String.valueOf(list.size()));
     sj.add(list.stream()
         .limit(5)
-        .map(str -> threadId(str))
+        .map(ThreadsInspection2::threadId)
         .collect(Collectors.joining(", ")));
     System.out.println(sj.toString());
   }
