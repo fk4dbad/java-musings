@@ -1,4 +1,11 @@
+# maven output
+/target/
+
+# eclipse
 /.project
 /.classpath
 /.settings/
-/target/
+
+# intellij
+/.idea/
+*.iml
