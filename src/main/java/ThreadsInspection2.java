@@ -16,7 +16,7 @@ public class ThreadsInspection2 {
   public static void main(String[] args) throws Exception {
 
     URL threadsUrl = Objects.requireNonNull(ThreadsInspection2.class.getResource("threads2.txt"), "no threads");
-    
+
     List<String> blocks = Pattern.compile("\r?\n\r?\n\"")
         .splitAsStream(Resources.toString(threadsUrl, Charsets.UTF_8))
         .map(str -> "\"" + str)

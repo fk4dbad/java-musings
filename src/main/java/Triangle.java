@@ -3,8 +3,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Triangle {
-  public static class Vertex {}
-  
+  public static class Vertex {
+  }
+
   private Vertex a, b, c;
 
   public Set<Vertex> getVertices() {
@@ -25,6 +26,5 @@ public class Triangle {
     Triangle other = (Triangle) obj;
     return getVertices().equals(other.getVertices());
   }
-  
-  
+
 }

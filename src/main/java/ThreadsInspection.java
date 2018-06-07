@@ -23,11 +23,10 @@ public class ThreadsInspection {
         .map(String::trim)
         .filter(ThreadsInspection::isThread)
         .collect(Collectors.toList());
-    Predicate<String> unknownBlocked =
-        str -> isBlocked(str) && !isNanoCache301(str) && !isNemoDataComponent(str) && !isInInterior(str) && !isTaskQueue(str) && !isSingularity(str) && !isThreadPool(str) && !isTimeoutServiceEngine(
-            str) && !isMQ(str);
+    Predicate<String> unknownBlocked = str -> isBlocked(str) && !isNanoCache301(str) && !isNemoDataComponent(str) && !isInInterior(str) && !isTaskQueue(str)
+        && !isSingularity(str) && !isThreadPool(str) && !isTimeoutServiceEngine(str) && !isMQ(str);
 
-    //blocks.stream().filter(unknownBlocked).forEach(str -> System.out.println("####\n" + str));
+    // blocks.stream().filter(unknownBlocked).forEach(str -> System.out.println("####\n" + str));
 
     System.out.println("####\n|| Name || Count || Examples ||");
     printTableRow(blocks, "threads total", str -> true);
@@ -36,10 +35,12 @@ public class ThreadsInspection {
     printTableRow(blocks, "threads in interior (not blocked)", str -> isInInterior(str) && !isBlocked(str));
     printTableRow(blocks, "threads blocked in InteriorDataMatrix", str -> isBlocked(str) && isInInterior(str));
     printTableRow(blocks, "threads blocked in InteriorDataMatrix in NemoJSONRequestHandler", str -> isBlocked(str) && isInInterior(str) && isInNemoJSONRequest(str));
-    printTableRow(blocks, "threads in InteriorDataMatrix in NemoJSONRequestHandler (not blocked)", str -> !isBlocked(str) && isInInterior(str) && isInNemoJSONRequest(str));
+    printTableRow(blocks, "threads in InteriorDataMatrix in NemoJSONRequestHandler (not blocked)",
+        str -> !isBlocked(str) && isInInterior(str) && isInNemoJSONRequest(str));
     printTableRow(blocks, "threads in InteriorDataMatrix not in NemoJSONRequestHandler", str -> isInInterior(str) && !isInNemoJSONRequest(str));
     printTableRow(blocks, "threads blocked in NanoCacheImpl", str -> isBlocked(str) && isNanoCache301(str));
-    printTableRow(blocks, "threads blocked in NanoCacheImpl not in interior", str -> isBlocked(str) && isNanoCache301(str) && !isInInterior(str) && !isNemoDataComponent(str));
+    printTableRow(blocks, "threads blocked in NanoCacheImpl not in interior",
+        str -> isBlocked(str) && isNanoCache301(str) && !isInInterior(str) && !isNemoDataComponent(str));
     printTableRow(blocks, "threads blocked in NemoDataComponent.getObjectsForCarline", str -> isBlocked(str) && isNemoDataComponent(str));
     printTableRow(blocks, "threads blocked not in NemoDataComponent.getObjectsForCarline", str -> isBlocked(str) && !isNemoDataComponent(str));
     printTableRow(blocks, "threads blocked in TaskQueue", str -> isBlocked(str) && isTaskQueue(str));

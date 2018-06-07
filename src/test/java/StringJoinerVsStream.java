@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class StringJoinerVsStream {
 
-	private static final int TEST_SIZE = 100;
+  private static final int TEST_SIZE = 100;
 
   @Test
   void testStringJoiner() {
@@ -26,7 +26,7 @@ class StringJoinerVsStream {
     assertFalse(joins.isEmpty());
   }
 
-	@Test
+  @Test
   void testStringBuilder() {
     List<String> joins = new ArrayList<>(TEST_SIZE);
     for (int i = 0; i < TEST_SIZE; i++) {
@@ -36,9 +36,9 @@ class StringJoinerVsStream {
       joins.add(sb);
     }
     assertFalse(joins.isEmpty());
-	}
+  }
 
-	@Test
+  @Test
   void testStream() throws Exception {
     List<String> joins = IntStream.range(0, TEST_SIZE)
         .mapToObj(i -> IntStream.range(0, i)
