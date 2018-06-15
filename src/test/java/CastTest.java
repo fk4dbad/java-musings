@@ -3,6 +3,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Random;
 import java.util.function.Function;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,15 @@ import org.slf4j.LoggerFactory;
 
 public class CastTest {
   private static final Logger LOG = LoggerFactory.getLogger(CastTest.class);
+
+  @BeforeAll
+  public static void precompileRandomQuestionMark() {
+    Random rnd = new Random(1337);
+    for (int i = 0; i < 100; i++) {
+      rnd.nextInt(100);
+      rnd.nextBoolean();
+    }
+  }
 
   @Test
   @DisplayName("Cast by Exception")
