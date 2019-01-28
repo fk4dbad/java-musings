@@ -5,8 +5,8 @@ import java.util.stream.Stream;
 
 public class StringFormatTest {
   public static void main(String[] args) {
-    double[] values = { 13.0, 0.1234, 13.37 };
-    String[] patterns = { "0.00", "#.#", "#.0", "#.0#" };
+    double[] values = { 13.0, 3.14, 0.1234, 13.37, 133.7 };
+    String[] patterns = { "0.00", "#0.00", "#.#", "#.0", "#.0#" };
     System.out.print(format("value"));
     Stream.of(patterns)
         .forEach(pattern -> System.out.print(format(pattern)));
