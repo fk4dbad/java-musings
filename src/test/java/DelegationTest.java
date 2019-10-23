@@ -66,7 +66,7 @@ public class DelegationTest {
   }
 
   @Test
-  void testDelegator() throws Exception {
+  public void testDelegator() throws Exception {
     testDoSomething(a -> new ADelegator(a) {
       @Override
       public void doSomething() {
@@ -78,7 +78,7 @@ public class DelegationTest {
   }
 
   @Test
-  void testAspect() throws Exception {
+  public void testAspect() throws Exception {
     testDoSomething(a -> new AAspect(a) {
       @Override
       void withA(Consumer<A> func) {
