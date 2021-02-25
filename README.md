@@ -1,3 +1,3 @@
-# Florian's Java tests
+# Just My Java Musings
 
-Just myself trying out some Java related stuff.
+Trying out some Java related stuff. Programming techniques, performance comparison etc.
